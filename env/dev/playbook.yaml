@@ -1,0 +1,36 @@
+- hosts: terraform-deploy
+  tasks: 
+  - name: 
+    copy:
+      dest: /home/ec2-user/index.html
+      content: <h1>Deployed via terraform</h1>
+  
+  - name: Instalando pyton
+    dnf: 
+      pkg :
+        - python3
+        - virtualenv
+      update_cache: yes
+    become: yes
+     
+  - name: verify installed go
+    stat: 
+      path: /usr/local/go/bin/go
+      register: existe
+  
+  - name: donwload-go 
+    unarchive:
+      src: https://golang.org/dl/go1.23.0.linux-amd64.tar.gz
+      dest: /usr/local
+      remote_src: yes
+    become: yes
+    when: not existe.stat.exists
+
+  - name: install-go
+    shell: "export PATH=$PATH:/usr/local/go/bin \
+            && go version \ 
+            && rm -rf go1.23.0.linux-amd64.tar.gz"
+    become: yes
+  
+  - name: install-vpn
+    shell: "curl -s https://install.zerotier.com | sudo bash"

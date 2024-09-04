@@ -23,3 +23,27 @@ variable "security_name" {
     description = "Nome do security group"
     default = "devops"
 }
+
+
+variable name_group {
+
+    type = string
+    default = "grupo"
+
+}
+
+variable "minsize" {
+    type = number
+    description = "Minimo de instancias"
+    default = 1
+}
+
+
+variable "maxsize" {
+
+    type = number
+    description = "Maximo de instancias"
+    default= 2
+
+
+}

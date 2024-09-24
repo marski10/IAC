@@ -1,5 +1,5 @@
 cd /home/ec2-user
-dnf install -y ansible
+sudo dnf install -y ansible
 tee -a playbook.yml > /dev/null <<EOT
 - hosts: localhost
   tasks: 
@@ -49,9 +49,9 @@ tee -a playbook.yml > /dev/null <<EOT
       backrefs: yes
 
   - name: configure
-    shell: '. /home/ec2-user/tcc/venv/bin/activate; python /home/ec2-user/tcc/manage.py migrate'
+    shell: '. /home/ec2-user/tcc/venv/bin/activate; python3 /home/ec2-user/tcc/manage.py migrate'
   - name: carregando-dados
-    shell: '. /home/ec2-user/tcc/venv/bin/activate; python /home/ec2-user/tcc/manage.py loaddata clientes.json'
+    shell: '. /home/ec2-user/tcc/venv/bin/activate; python3 /home/ec2-user/tcc/manage.py loaddata clientes.json'
 
   - name: install-go
     shell: "export PATH=$PATH:/usr/local/go/bin \
@@ -64,6 +64,6 @@ tee -a playbook.yml > /dev/null <<EOT
 
 
   - name: iniciando-server
-    shell: '. /home/ec2-user/tcc/venv/bin/activate; nohup python /home/ec2-user/tcc/manage.py runserver 0.0.0.0:8002 &'
+    shell: '. /home/ec2-user/tcc/venv/bin/activate; nohup python3 /home/ec2-user/tcc/manage.py runserver 0.0.0.0:8000 &'
 EOT
 ansible-playbook playbook.yml

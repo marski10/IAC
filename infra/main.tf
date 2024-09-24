@@ -20,13 +20,13 @@ provider "aws" {
 
 resource "aws_default_subnet" "subnet_zone_a"{
 
-  availability_zone  = ["${var.regiao_aws}b"]
+  availability_zone  = "${var.regiao_aws}a"
 
 }
 
 resource "aws_default_subnet" "subnet_zone_b"{
 
-  availability_zone  = ["${var.regiao_aws}b"]
+  availability_zone  = "${var.regiao_aws}b"
 
 }
 
@@ -39,6 +39,23 @@ resource "aws_alb" "loadbalance"{
 }
 
 
+resource "aws_lb_target_group" "aws_target"{
+
+  port = "8000"
+  protocol = "HTTP"
+  name = "marcos-deploy"
+  vpc_id = aws_default_vpc.vpc_deploy.id
+}
+
+
+
+resource "aws_default_vpc" "vpc_deploy" {
+ 
+}
+
+
+
+
 resource "aws_launch_template" "template" {
   instance_type = var.machine
   image_id           = "ami-066784287e358dad1"
@@ -48,6 +65,7 @@ resource "aws_launch_template" "template" {
     Application = "MarcosDeploy"
   }
   user_data = filebase64("ansible.sh")
+
   
 }
 
@@ -56,9 +74,13 @@ resource "aws_key_pair" "deployer"{
   public_key = file("${var.chave}.pub")
 }
 
+output "verify" {
+ value =  "${var.regiao_aws}b"
+}
+
 
 resource aws_autoscaling_group "group" {
-  min_size = var.minsize
+  min_size = var.minsize 
   max_size = var.maxsize
   name = var.name_group
   availability_zones = ["${var.regiao_aws}b","${var.regiao_aws}a"]
@@ -67,7 +89,18 @@ resource aws_autoscaling_group "group" {
     version = "$Latest"
 
   }
+ target_group_arns = [aws_lb_target_group.aws_target.arn]
+}
+
+resource "aws_lb_listener" "deploy_listener" {
+  load_balancer_arn = aws_alb.loadbalance.arn
+  port = "8000"
+  protocol = "HTTP"
+  default_action{
+    type = "forward"
+    target_group_arn = aws_lb_target_group.aws_target.arn
+
+  }
 
 
-
-
+}

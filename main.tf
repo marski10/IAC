@@ -20,6 +20,7 @@ module cluster_lab {
     minsize = var.minsize
     maxunavailable = var.maxunavailable
     rententiondays = var.rententiondays
+    instance_types = var.instance_types
 }
 
 # module lab_buckets {

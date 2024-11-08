@@ -45,3 +45,5 @@ variable "clusterversion" {
    type = number
    default = 1 
 }
+
+variable instance_types {}

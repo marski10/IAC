@@ -51,3 +51,9 @@ variable sg_group_id {
   description = "security group id"
 
 }
+
+variable instance_types {
+    description = "Instances type aws"
+    type = tuple([ string ])
+    default = ["t2.micro"]
+}

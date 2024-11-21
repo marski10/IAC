@@ -20,6 +20,9 @@ terraform {
 
 }
 
+provider "kubernetes" {
+  config_path = "./"
+}
 
 provider "aws" {
 

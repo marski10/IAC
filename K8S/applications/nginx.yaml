@@ -41,7 +41,7 @@ metadata:
   name: nginx-ingress
 #   annotations:
 spec:
-  ingressClassName: nginx-example
+  ingressClassName: alb
   rules:
   - http:
       paths:

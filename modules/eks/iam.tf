@@ -196,26 +196,27 @@ resource "aws_iam_role_policy" "eks_elb"{
 }
 
 
+
+data "aws_iam_policy_document" "assume_role" {
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["pods.eks.amazonaws.com"]
+    }
+
+    actions = [
+      "sts:AssumeRole",
+      "sts:TagSession"
+    ]
+  }
+}
+
 resource "aws_iam_role" "eks_elb" {
   name = "eks-irsa-role"
 
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [{
-      Sid    = ""
-      Effect = "Allow",
-      Principal = {
-        Federated = aws_iam_openid_connect_provider.main.arn
-      },
-      Action = "sts:AssumeRoleWithWebIdentity",
-      Condition = {
-        StringEquals = {
-            "${aws_iam_openid_connect_provider.main.url}:sub" = "system:serviceaccount:kube-system:alb-ingress-controller"
-            "${aws_iam_openid_connect_provider.main.url}:aud" = "sts.amazonaws.com"
-          }
-      }
-    }]
-  })
+  assume_role_policy = data.aws_iam_policy_document.assume_role.json
 }
 
 resource "kubernetes_service_account" "main" {
@@ -226,4 +227,6 @@ resource "kubernetes_service_account" "main" {
       "eks.amazonaws.com/role-arn" = aws_iam_role.eks_elb.arn
     }
   }
+
+  depends_on = [local_file.kubeconfig]
 }

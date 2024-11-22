@@ -21,7 +21,7 @@ terraform {
 }
 
 provider "kubernetes" {
-  config_path = "./"
+  config_path = "/workspaces/go-3/IAC/kubeconfig"
 }
 
 provider "aws" {

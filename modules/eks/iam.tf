@@ -205,9 +205,14 @@ data "aws_iam_policy_document" "assume_role" {
       type        = "Service"
       identifiers = ["pods.eks.amazonaws.com"]
     }
+    principals {
+      type        = "Federated"
+      identifiers = [aws_iam_openid_connect_provider.main.arn]
+    }
 
     actions = [
       "sts:AssumeRole",
+      "sts:AssumeRoleWithWebIdentity",
       "sts:TagSession"
     ]
   }

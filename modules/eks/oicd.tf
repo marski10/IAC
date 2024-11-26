@@ -12,7 +12,7 @@ output "url" {
 }
 
 resource "aws_iam_openid_connect_provider" "main" {
-  client_id_list  = ["sts.amazonaws.com"]
+  client_id_list  = ["sts.amazonaws.com","eks.amazonaws.com"]
   thumbprint_list = [data.tls_certificate.main.certificates[0].sha1_fingerprint]
   url             = resource.aws_eks_cluster.cluster_lab.identity[0].oidc[0].issuer
 }
